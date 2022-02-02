@@ -1,0 +1,1 @@
+c++ -O3 -Wall -shared -std=c++11 -fPIC -I/usr/include/python3.8 -I/home/radost/Documents/Doktorat/ProteinDiffusion/GUIApp/venv/lib/python3.8/site-packages/pybind11/include generator_interface.cpp -o generator_interface.cpython-38-x86_64-linux-gnu.so
