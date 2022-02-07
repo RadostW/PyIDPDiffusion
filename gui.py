@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import (
     QSpinBox,
     QProgressBar,
     QLineEdit,
+    QShortcut,
 )
 from PyQt5.QtGui import (
     QPainter,
@@ -24,6 +25,7 @@ from PyQt5.QtGui import (
     QTextCharFormat,
     QPen,
     QDoubleValidator,
+    QKeySequence,
 )
 from PyQt5.QtCore import Qt
 
@@ -56,12 +58,30 @@ class MyApp(QWidget):
         super().__init__()
         self.initUI()
 
+    def on_larger(self):
+        self.density_scale = self.density_scale + 1
+        self.on_resize()
+
+    def on_smaller(self):
+        self.density_scale = self.density_scale - 1
+        self.on_resize()
+        
+    def on_resize(self):
+        extra = {"density_scale": f"{self.density_scale}"}
+        apply_stylesheet(self.global_app, theme="dark_amber.xml", extra=extra)    
+
     def initUI(self):
 
         # Window layout
         outer_layout = QHBoxLayout()
         self.setLayout(outer_layout)
         self.setWindowTitle("Disordered protein diffusion")
+        
+        self.shortcut_larger = QShortcut(QKeySequence("Ctrl++"), self)
+        self.shortcut_larger.activated.connect(self.on_larger)
+        
+        self.shortcut_larger = QShortcut(QKeySequence("Ctrl+-"), self)
+        self.shortcut_larger.activated.connect(self.on_smaller)
 
         # Outer layout
         left_layout = QVBoxLayout()
@@ -308,14 +328,17 @@ class MyApp(QWidget):
         painter.end()
         right_canvas.update()
 
+density_scale = 20
 
 def main():
     app = QApplication(sys.argv)
 
-    extra = {"density_scale": "+20"}
+    extra = {"density_scale": f"{density_scale}"}
     apply_stylesheet(app, theme="dark_amber.xml", extra=extra)
 
     window = MyApp()
+    window.density_scale = density_scale
+    window.global_app = app
     window.show()
 
     sys.exit(app.exec_())
